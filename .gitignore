@@ -1,3 +1,11 @@
+# vim files
+*.swp
+tmp
+temp
+
+# sumodules dirs
+libcmaes
+
 # LaTeX
 
 *.aux
