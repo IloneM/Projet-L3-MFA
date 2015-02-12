@@ -1,0 +1,63 @@
+\documentclass{article}          % article
+\usepackage[a4paper]{geometry}   % ... avec les bonnes marges
+\usepackage[utf8]{inputenc}      % accents encodés en UTF-8
+\usepackage[T1]{fontenc}         % polices accentuées
+\usepackage{lmodern}             % ... et vectorielles
+\usepackage[francais]{babel}     % tout en français
+
+\usepackage{amsfonts}            %
+\usepackage{amssymb}             % Divers symboles, environnements et polices utiles
+\usepackage{amsmath}             %
+\usepackage{amsthm}              %
+
+\usepackage{todonotes}           %
+
+\newcommand{\fonction}[4]{\left\{\begin{array}{rcl}#1 &
+     		\longrightarrow & #2 \\ #3 & \longmapsto & #4 \end{array}\right.}
+\newcommand{\ibl}{[\![}
+\newcommand{\ibr}{]\!]}
+
+\theoremstyle{definition}
+
+% avec numerotation
+
+\newtheorem{Exercice}{Exercice}
+\newtheorem{Lemme}{Lemme}
+\newtheorem{Corollaire}{Corollaire}
+
+\newenvironment{Exo}{\begin{Exercice}\normalfont\hfill{}\\}{\end{Exercice}}
+\newenvironment{ExoQues}{\begin{Exercice}\normalfont\hfill{}\\\begin{enumerate}}{\end{enumerate}\end{Exercice}}
+\newenvironment{LM}{\begin{Lemme}\normalfont\hfill{}\\}{\end{Lemme}}
+\newenvironment{Coro}{\begin{Corollaire}\normalfont\hfill{}\\}{\end{Corollaire}}
+
+\newenvironment{ls}{\begin{list}{$\to$}{}}{\end{list}}
+\newenvironment{lls}{\begin{list}{$\ast$}{}}{\end{list}}
+\newenvironment{llls}{\begin{list}{$\cdot)$}{}}{\end{list}}
+
+\begin{document}
+\title{Sur des m\'ethodes d'optimisation sans contraintes de fonctions peu r\'eguli\`eres: BFGS et CMA-ES}
+\author{Nilo Schwencke}
+\maketitle
+
+\section{Introduction}
+
+{\bf \`A compl\'eter.}
+
+\section{BFGS}
+
+
+
+\section{CMA-ES}
+
+\subsection{Pr\'esentation g\'en\'erale}
+
+%CMA-ES est un proc\'ed\'e d'optimisation sans contraintes, dont le principale int\'er\^et est de pouvoir \^etre appliqu\'e \`a des fonctions tr\`es peu r\'eguli\`eres
+%(non d\'erivables, chaotiques\todo{ill-condtionned?}, ...). 
+
+CMA-ES (pour `covariance matrix adapation') fait partie de la classe des algorithmes d'optimisation \'evolutionnistes.
+
+\subsubsection{Principe}
+
+
+
+\end{document}
