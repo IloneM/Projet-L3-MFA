@@ -1,5 +1,7 @@
 # vim files
 *.swp
+tmp
+temp
 
 # Compiled Object files
 *.slo
