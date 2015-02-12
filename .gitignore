@@ -3,6 +3,9 @@
 tmp
 temp
 
+# sumodules dirs
+libcmaes
+
 # Compiled Object files
 *.slo
 *.lo
