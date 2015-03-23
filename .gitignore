@@ -1,3 +1,7 @@
+# trash i.e. useless
+old
+old/*
+
 # vim files
 *.swp
 tmp
