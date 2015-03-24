@@ -15,25 +15,24 @@ CCCP = g++
 #### Fichiers ####
 CPP_FILES = $(wildcard *.cpp)
 HPP_FILES = $(wildcard *.hpp)
-O_FILES = $(SRCS:.cpp=.o)
+O_FILES = $(CPP_FILES:.cpp=.o)
 SRCS = $(CPP_FILES) $(HPP_FILES)
-MAIN_FILE = main
 EXEC = rp_cma
 
 #### Dépendances ####
-all: $(MAIN_FILE)
+all: $(EXEC)
 
+#main.o: $(HPP_FILES)
 %.o: %.cpp
-	$(CCCP) $(CPPFLAGS) -o $@ -c $< $(LDFLAGS)
+	@$(CCCP) $(CPPFLAGS) -o $@ -c $< $(LDFLAGS)
 
-#rp_cma.o      : rp_cma.cpp
-$(MAIN_FILE) : $(O_FILES)
-	@$(CCCP) $(CPPFLAGS) $(O_FILES) $(MAIN_FILE).cpp -o $(EXEC) $(LDFLAGS) 
+$(EXEC) : $(O_FILES)
+	@$(CCCP) $(CPPFLAGS) -o $@ $^ $(LDFLAGS)
 
 #### Cibles diverses ####
 clean:
-	@rm $(O_FILES)
+	@rm -f $(O_FILES)
 
 mrproper: clean
-	@rm $(EXEC)
+	@rm -f $(EXEC)
 
