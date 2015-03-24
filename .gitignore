@@ -8,7 +8,7 @@ tmp
 temp
 
 # submodules dirs
-libcmaes
+#libcmaes
 
 # Compiled Object files
 *.slo
