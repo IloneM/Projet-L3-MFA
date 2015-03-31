@@ -7,6 +7,10 @@
 # Description des differents modules
 #
 
+#/*
+# * replace -o by -gl for debug
+# */
+
 SHELL = /bin/sh
 CPPFLAGS = -std=gnu++11 -fopenmp -I/usr/include/eigen3/ -I/usr/local/include/libcmaes/ -L/usr/local/lib/
 LDFLAGS = -lcmaes
