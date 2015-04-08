@@ -1,0 +1,93 @@
+#######     sauvegarde154
+#######################
+
+# 	La population
+# 	-------------
+POPULATION 10	# taille population
+
+# 	Criteres d'arret
+# 	----------------
+MAX_EVAL 50000	# Nbre max total d'evaluations de fitness
+MAX_GEN 0	# Nbre max de generations (si pas nbre d'eval)
+DEBUT 500	# Nbre minimal d'evaluations (ou de generations)
+FIN 2000	# Nbre max d'evaluations (ou de generation) sans progres
+PERF_CIBLE Neant	# Valeur cible pour la perf 
+
+# 	Affichage
+# 	---------
+AFF_POP 1	# Niveau d'affichage population
+COURBE 0	# Frequence d'affichage courbe
+
+# 	Les sauvegardes/relectures
+# 	--------------------------
+FREQ_SAV 0	# Frequence des sauvegardes (0 = en fin de pgm only)
+NOM_SAV sauvegarde	# Prefixe des fichiers de sauvegarde (+ No gen)
+NOM_RES popu	# Nom du fichier de courbe (+.xg)
+RECALCUL_PERF 0	# Faut-il recalculer les perfs des chromos relus (0/1)
+
+# 	Schema d'evolution
+# 	------------------
+MAXIMISATION 1	# Maximisation (1) ou minimisation(0)
+EVOLUTION ES+	# Schema d'evolution (GAG, 'ES,', ES+, EP)
+LAMBDA 70	# Nombre d'enfants
+
+# 	Les croisements
+# 	---------------
+PCROIS 0.6	# Probabilite de croisement
+
+# 	Les mutations
+# 	-------------
+PMUT 1	# Proba de mutation par individu [0.1]
+STRATEGIE ADAPT	# Strategie de mutation : Fixe, un_cinq (regle des 1/5), un_adapt ou adapt
+TAU 1	# Adaptation globale du sigma local (* Schwefel's scale)
+TAU_LOC 1	# Adaptation locale du sigma local (* Schwefel's scale)
+SIGMA 0.3	# Valeur initiale du Sigma
+
+# 	Le probleme
+# 	-----------
+LA_PERF ROC	# Nom de la fonction perf (ROC)
+DATA Basile	# Nom du fichier des data
+BORNES 0	# Variables bornees (1) ou non (0) [1]
+LOG 0	# Codage log
+NEG 1	# Poids negatifs
+RUC 1	# Optimise Aire Roc
+Sing 1	# one class against all
+SRM 0.001	# Weight regularization L1
+NL 1	# Function assumed linear (1) or not (0)
+Multi 1	# Function min of k forms (1)
+##############################
+FICHIERS 0
+##############################
+EVALUATIONS 10720
+##############################
+INDIVIDUS  10
+5.22801e+08	5.22801e+08 -72.7638  -1.70881e-15  -9.09608e-16  7.01926e-15  
+************************
+6.13268e-12 3.00549e-16 1.09129e-17 1.90718e-18 
+5.22801e+08	5.22801e+08 -72.7638  -5.22384e-15  -9.17677e-16  7.02632e-15  
+************************
+3.01392e-15 9.92097e-16 1.82745e-19 1.25223e-18 
+5.22801e+08	5.22801e+08 -72.7638  -3.73888e-15  -9.17808e-16  7.02618e-15  
+************************
+3.01238e-15 9.25444e-16 1.57543e-19 2.52768e-19 
+5.22801e+08	5.22801e+08 -72.7638  -4.33655e-15  -9.16786e-16  7.02669e-15  
+************************
+4.81081e-15 2.77266e-16 2.28389e-19 1.99686e-19 
+5.22801e+08	5.22801e+08 -72.7638  -4.4153e-15  -9.17079e-16  7.02662e-15  
+************************
+1.79799e-15 1.03338e-16 1.233e-19 8.04335e-20 
+5.22801e+08	5.22801e+08 -72.7638  -4.41089e-15  -9.175e-16  7.02678e-15  
+************************
+1.28153e-15 1.75683e-16 2.81397e-19 3.40865e-19 
+5.22801e+08	5.22801e+08 -72.7638  -5.21371e-15  -9.17283e-16  7.02749e-15  
+************************
+2.46381e-16 1.45536e-16 1.02717e-18 1.42945e-18 
+5.22801e+08	5.22801e+08 -72.7638  -4.67839e-15  -9.18584e-16  7.02624e-15  
+************************
+4.14571e-16 1.29359e-16 1.37223e-18 7.99614e-19 
+5.22801e+08	5.22801e+08 -72.7638  -6.37598e-15  -9.17027e-16  7.02597e-15  
+************************
+8.31188e-17 2.12832e-16 2.59271e-19 3.77915e-19 
+5.22801e+08	5.22801e+08 -72.7638  -5.39427e-15  -9.17128e-16  7.02638e-15  
+************************
+2.7739e-15 3.00353e-16 1.78757e-19 1.53664e-19 

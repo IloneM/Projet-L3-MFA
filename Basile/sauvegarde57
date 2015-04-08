@@ -1,0 +1,93 @@
+#######     sauvegarde57
+#######################
+
+# 	La population
+# 	-------------
+POPULATION 10	# taille population
+
+# 	Criteres d'arret
+# 	----------------
+MAX_EVAL 50000	# Nbre max total d'evaluations de fitness
+MAX_GEN 0	# Nbre max de generations (si pas nbre d'eval)
+DEBUT 500	# Nbre minimal d'evaluations (ou de generations)
+FIN 2000	# Nbre max d'evaluations (ou de generation) sans progres
+PERF_CIBLE Neant	# Valeur cible pour la perf 
+
+# 	Affichage
+# 	---------
+AFF_POP 1	# Niveau d'affichage population
+COURBE 0	# Frequence d'affichage courbe
+
+# 	Les sauvegardes/relectures
+# 	--------------------------
+FREQ_SAV 0	# Frequence des sauvegardes (0 = en fin de pgm only)
+NOM_SAV sauvegarde	# Prefixe des fichiers de sauvegarde (+ No gen)
+NOM_RES popu	# Nom du fichier de courbe (+.xg)
+RECALCUL_PERF 0	# Faut-il recalculer les perfs des chromos relus (0/1)
+
+# 	Schema d'evolution
+# 	------------------
+MAXIMISATION 1	# Maximisation (1) ou minimisation(0)
+EVOLUTION ES+	# Schema d'evolution (GAG, 'ES,', ES+, EP)
+LAMBDA 70	# Nombre d'enfants
+
+# 	Les croisements
+# 	---------------
+PCROIS 0.6	# Probabilite de croisement
+
+# 	Les mutations
+# 	-------------
+PMUT 1	# Proba de mutation par individu [0.1]
+STRATEGIE ADAPT	# Strategie de mutation : Fixe, un_cinq (regle des 1/5), un_adapt ou adapt
+TAU 1	# Adaptation globale du sigma local (* Schwefel's scale)
+TAU_LOC 1	# Adaptation locale du sigma local (* Schwefel's scale)
+SIGMA 0.3	# Valeur initiale du Sigma
+
+# 	Le probleme
+# 	-----------
+LA_PERF ROC	# Nom de la fonction perf (ROC)
+DATA Basile	# Nom du fichier des data
+BORNES 0	# Variables bornees (1) ou non (0) [1]
+LOG 0	# Codage log
+NEG 1	# Poids negatifs
+RUC 1	# Optimise Aire Roc
+Sing 1	# one class against all
+SRM 0.001	# Weight regularization L1
+NL 0	# Function assumed linear (1) or not (0)
+Multi 1	# Function min of k forms (1)
+##############################
+FICHIERS 0
+##############################
+EVALUATIONS 3930
+##############################
+INDIVIDUS  10
+4.76039e+16	4.76039e+16 287.865 (1231.92) -38.5852 (32.1794) -1.85469 (-4.86111) 855.825 (294340) 
+************************
+0.419511 0.0918327 0.0224145 1.18868 9.0984 0.0545196 0.0682649 3336.28 
+4.76039e+16	4.76039e+16 291.792 (1226.41) -37.9752 (31.9785) -2.03917 (-5.10235) 854.357 (309986) 
+************************
+0.723925 0.104829 0.0270375 2.90014 3.14741 0.0914326 0.0940111 3108.55 
+4.76039e+16	4.76039e+16 287.697 (1234.44) -38.5852 (32.1504) -1.85692 (-4.96411) 853.413 (303702) 
+************************
+0.51738 0.117352 0.0155963 2.22179 1.5234 0.0389442 0.176721 1286.26 
+4.76039e+16	4.76039e+16 344.979 (1229.16) -37.5026 (31.9782) -2.04118 (-5.33213) 854.112 (320145) 
+************************
+0.416377 0.691224 0.00925303 1.14476 4.5999 0.0255979 0.15402 5447.28 
+4.76039e+16	4.76039e+16 322.28 (1166.1) -28.6445 (31.6072) -2.05148 (-5.17554) 853.764 (248013) 
+************************
+0.692966 0.860043 0.00581279 0.221256 20.5955 0.0827866 0.118457 409.401 
+4.76039e+16	4.76039e+16 284.493 (1099.49) -31.5562 (31.0512) -2.0907 (-5.67006) 852.519 (270761) 
+************************
+0.277061 0.153281 0.00417062 0.0518276 10.2258 0.10907 0.0434846 178.907 
+4.76039e+16	4.76039e+16 331.254 (1143.07) -37.5731 (31.9464) -2.08152 (-6.02211) 854.455 (311918) 
+************************
+0.816008 0.464217 0.0166607 0.693719 5.61184 0.0898864 0.283307 732.732 
+4.76039e+16	4.76039e+16 330.101 (1184.1) -37.5732 (31.9277) -1.90238 (-4.953) 854.977 (289448) 
+************************
+0.622437 0.601371 0.0151063 2.1561 8.12674 0.0200824 0.371961 2477.22 
+4.76039e+16	4.76039e+16 280.513 (1388.6) -28.0307 (31.4016) -2.11408 (-7.02156) 852.382 (264630) 
+************************
+0.432048 0.546846 0.00112718 0.15155 12.2925 0.0176063 0.0807106 686.688 
+4.76039e+16	4.76039e+16 281.116 (1388.79) -27.927 (31.3881) -2.11321 (-6.95768) 852.426 (265074) 
+************************
+0.471858 0.822723 0.00264538 0.201464 15.3999 0.0611149 0.125008 1554.67 

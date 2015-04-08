@@ -1,0 +1,93 @@
+#######     sauvegarde489
+#######################
+
+# 	La population
+# 	-------------
+POPULATION 10	# taille population
+
+# 	Criteres d'arret
+# 	----------------
+MAX_EVAL 50000	# Nbre max total d'evaluations de fitness
+MAX_GEN 0	# Nbre max de generations (si pas nbre d'eval)
+DEBUT 500	# Nbre minimal d'evaluations (ou de generations)
+FIN 2000	# Nbre max d'evaluations (ou de generation) sans progres
+PERF_CIBLE Neant	# Valeur cible pour la perf 
+
+# 	Affichage
+# 	---------
+AFF_POP 1	# Niveau d'affichage population
+COURBE 0	# Frequence d'affichage courbe
+
+# 	Les sauvegardes/relectures
+# 	--------------------------
+FREQ_SAV 0	# Frequence des sauvegardes (0 = en fin de pgm only)
+NOM_SAV sauvegarde	# Prefixe des fichiers de sauvegarde (+ No gen)
+NOM_RES popu	# Nom du fichier de courbe (+.xg)
+RECALCUL_PERF 0	# Faut-il recalculer les perfs des chromos relus (0/1)
+
+# 	Schema d'evolution
+# 	------------------
+MAXIMISATION 1	# Maximisation (1) ou minimisation(0)
+EVOLUTION ES+	# Schema d'evolution (GAG, 'ES,', ES+, EP)
+LAMBDA 70	# Nombre d'enfants
+
+# 	Les croisements
+# 	---------------
+PCROIS 0.6	# Probabilite de croisement
+
+# 	Les mutations
+# 	-------------
+PMUT 1	# Proba de mutation par individu [0.1]
+STRATEGIE ADAPT	# Strategie de mutation : Fixe, un_cinq (regle des 1/5), un_adapt ou adapt
+TAU 1	# Adaptation globale du sigma local (* Schwefel's scale)
+TAU_LOC 1	# Adaptation locale du sigma local (* Schwefel's scale)
+SIGMA 0.3	# Valeur initiale du Sigma
+
+# 	Le probleme
+# 	-----------
+LA_PERF ROC	# Nom de la fonction perf (ROC)
+DATA Basile_cos_diff	# Nom du fichier des data
+BORNES 1	# Variables bornees (1) ou non (0) [1]
+LOG 0	# Codage log
+NEG 0	# Poids negatifs
+RUC 1	# Optimise Aire Roc
+Sing 1	# one class against all
+SRM 0.001	# Weight regularization L1
+NL 1	# Function assumed linear (1) or not (0)
+Multi 1	# Function min of k forms (1)
+##############################
+FICHIERS 0
+##############################
+EVALUATIONS 34170
+##############################
+INDIVIDUS  10
+9.1564e+07	9.1564e+07 2.80099e-16  4.21358e-18  3.40098e-06  1  2.65796e-17  5.13875e-14  9.39859e-17  7.63516e-11  
+************************
+5.14391e-20 7.28481e-19 1.24859e-19 2.7408e-12 3.73217e-18 3.17321e-19 8.35905e-18 1.06626e-20 
+9.1564e+07	9.1564e+07 2.79403e-16  1.62882e-19  3.40098e-06  1  3.28394e-17  5.13831e-14  8.21196e-17  7.63516e-11  
+************************
+1.93149e-19 2.98946e-18 1.01849e-20 8.2083e-13 1.1367e-17 4.07616e-18 2.63972e-17 1.27541e-20 
+9.1564e+07	9.1564e+07 2.80501e-16  2.30759e-18  3.40098e-06  1  2.27823e-17  5.13866e-14  6.82199e-17  7.63516e-11  
+************************
+2.60674e-19 1.1132e-18 4.65513e-21 8.83698e-13 4.46956e-19 3.19866e-19 4.93296e-18 2.56429e-19 
+9.1564e+07	9.1564e+07 2.80075e-16  3.91108e-18  3.40098e-06  1  3.65756e-17  5.13869e-14  6.28441e-17  7.63516e-11  
+************************
+6.16165e-20 5.40549e-19 1.79554e-19 2.84208e-12 4.34695e-18 9.35353e-19 2.10376e-17 1.65405e-20 
+9.1564e+07	9.1564e+07 2.80084e-16  4.02444e-18  3.40098e-06  1  4.63815e-17  5.13895e-14  9.85358e-17  7.63516e-11  
+************************
+1.76006e-20 1.49541e-19 1.44554e-20 7.55448e-12 3.74851e-18 1.64628e-18 3.31951e-18 7.43311e-21 
+9.1564e+07	9.1564e+07 2.79925e-16  1.47664e-18  3.40098e-06  1  3.70511e-17  5.13844e-14  7.02571e-17  7.63516e-11  
+************************
+2.99836e-20 2.63275e-19 1.95097e-19 1.35003e-12 1.4428e-18 2.75252e-18 7.09164e-18 1.49161e-20 
+9.1564e+07	9.1564e+07 2.7992e-16  1.59518e-18  3.40098e-06  1  3.61087e-17  5.13854e-14  6.43448e-17  7.63516e-11  
+************************
+2.25227e-20 1.38203e-19 1.77874e-19 1.24087e-12 7.07172e-19 7.8777e-19 5.4298e-18 9.76995e-21 
+9.1564e+07	9.1564e+07 2.8006e-16  3.59328e-18  3.40098e-06  1  4.28963e-17  5.13869e-14  6.07258e-17  7.63516e-11  
+************************
+5.75636e-20 6.81657e-19 8.72082e-20 6.63072e-12 2.11994e-18 1.89917e-19 8.54829e-18 5.44377e-21 
+9.1564e+07	9.1564e+07 2.80069e-16  3.64673e-18  3.40098e-06  1  2.79187e-17  5.13875e-14  1.076e-16  7.63516e-11  
+************************
+4.28348e-20 1.21647e-19 2.20947e-20 6.93898e-12 5.48164e-18 2.96803e-18 7.90219e-18 1.21212e-20 
+9.1564e+07	9.1564e+07 2.80418e-16  3.09144e-18  3.40098e-06  1  2.30447e-17  5.13845e-14  5.28289e-17  7.63516e-11  
+************************
+4.29989e-19 1.24103e-18 9.94196e-21 9.12878e-13 5.35946e-19 1.17528e-18 1.10956e-17 2.75979e-19 

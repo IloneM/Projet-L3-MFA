@@ -1,0 +1,93 @@
+#######     sauvegarde99
+#######################
+
+# 	La population
+# 	-------------
+POPULATION 10	# taille population
+
+# 	Criteres d'arret
+# 	----------------
+MAX_EVAL 10000	# Nbre max total d'evaluations de fitness
+MAX_GEN 0	# Nbre max de generations (si pas nbre d'eval)
+DEBUT 500	# Nbre minimal d'evaluations (ou de generations)
+FIN 200	# Nbre max d'evaluations (ou de generation) sans progres
+PERF_CIBLE Neant	# Valeur cible pour la perf 
+
+# 	Affichage
+# 	---------
+AFF_POP 1	# Niveau d'affichage population
+COURBE 0	# Frequence d'affichage courbe
+
+# 	Les sauvegardes/relectures
+# 	--------------------------
+FREQ_SAV 0	# Frequence des sauvegardes (0 = en fin de pgm only)
+NOM_SAV sauvegarde	# Prefixe des fichiers de sauvegarde (+ No gen)
+NOM_RES popu	# Nom du fichier de courbe (+.xg)
+RECALCUL_PERF 0	# Faut-il recalculer les perfs des chromos relus (0/1)
+
+# 	Schema d'evolution
+# 	------------------
+MAXIMISATION 1	# Maximisation (1) ou minimisation(0)
+EVOLUTION ES+	# Schema d'evolution (GAG, 'ES,', ES+, EP)
+LAMBDA 70	# Nombre d'enfants
+
+# 	Les croisements
+# 	---------------
+PCROIS 0.6	# Probabilite de croisement
+
+# 	Les mutations
+# 	-------------
+PMUT 1	# Proba de mutation par individu [0.1]
+STRATEGIE ADAPT	# Strategie de mutation : Fixe, un_cinq (regle des 1/5), un_adapt ou adapt
+TAU 1	# Adaptation globale du sigma local (* Schwefel's scale)
+TAU_LOC 1	# Adaptation locale du sigma local (* Schwefel's scale)
+SIGMA 0.3	# Valeur initiale du Sigma
+
+# 	Le probleme
+# 	-----------
+LA_PERF ROC	# Nom de la fonction perf (ROC)
+DATA Basile	# Nom du fichier des data
+BORNES 1	# Variables bornees (1) ou non (0) [1]
+LOG 0	# Codage log
+NEG 0	# Poids negatifs
+RUC 1	# Optimise Aire Roc
+Sing 1	# one class against all
+SRM 0.001	# Weight regularization L1
+NL 1	# Function assumed linear (1) or not (0)
+Multi 1	# Function min of k forms (1)
+##############################
+FICHIERS 0
+##############################
+EVALUATIONS 6870
+##############################
+INDIVIDUS  10
+216.099	216.099 9.35341e-17  0.847553  0.783216  1.19154e-15  
+************************
+5.6051e-16 2.73438e-11 9.39912e-12 2.44581e-14 
+216.099	216.099 2.09286e-16  0.847553  0.783216  7.85712e-15  
+************************
+4.16821e-15 1.00839e-10 9.54166e-11 6.34993e-14 
+216.099	216.099 1.05317e-15  0.847553  0.783216  3.38653e-15  
+************************
+3.24882e-15 7.78434e-12 1.26398e-12 2.91728e-14 
+216.099	216.099 1.12074e-15  0.847553  0.783216  1.12249e-14  
+************************
+4.48712e-15 2.73751e-11 1.37676e-12 1.57071e-14 
+216.099	216.099 6.62454e-17  0.847553  0.783216  8.57705e-16  
+************************
+1.52198e-15 1.14312e-11 1.31235e-12 9.89378e-15 
+216.099	216.099 5.68917e-16  0.847553  0.783216  1.44897e-14  
+************************
+2.57298e-15 4.9319e-12 1.63934e-12 1.84702e-14 
+216.099	216.099 1.04558e-15  0.847553  0.783216  5.66785e-15  
+************************
+1.51799e-15 6.63111e-11 1.97432e-10 5.70076e-14 
+216.099	216.099 2.16485e-16  0.847553  0.783216  1.08551e-14  
+************************
+2.21264e-16 1.94897e-11 4.44305e-12 9.13688e-15 
+216.099	216.099 1.5511e-15  0.847553  0.783216  1.7453e-14  
+************************
+2.79466e-15 6.77488e-11 4.96883e-11 9.75069e-14 
+216.099	216.099 2.036e-16  0.847553  0.783216  1.16086e-14  
+************************
+2.83819e-15 2.28297e-11 5.28422e-13 3.74505e-15 

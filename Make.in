@@ -1,0 +1,46 @@
+# ----------------------------------------------------------------------
+# Where........: CMAP - Polytechnique 
+# File.........: Make.in
+# Author.......: Bertrand Lamy (Equipe genetique)
+# Created......: Fri Mar 17 15:13:48 1995
+# Description..: Definitions globales 
+# 
+# Ident........: $Id: Make.in,v 1.5 1998/03/20 06:47:30 marc Exp $
+# ----------------------------------------------------------------------
+
+# This is the root of project
+CXX_DIR=/home/ilone/Documents/Universite/L3/S6/Projet-temp
+
+RAL_DIR = $(CXX_DIR)/ral
+UTIL_DIR = $(CXX_DIR)/util
+
+RAL_LIB = $(RAL_DIR)/libral.a
+UTIL_LIB = $(UTIL_DIR)/libutil.a
+
+INC_MACRO = -I$(RAL_DIR) -I$(UTIL_DIR)
+
+# Compilateurs pour HP-UX 9.xx. 
+# Pour le moment le passage a un autre compilo se fait en changeant 
+# a la main les commentaires !
+# CXX = CC -Aa
+# CC  = cc -Aa
+
+# Pour compilation gcc 
+CXX = g++ 
+CC  = gcc 
+F77 = g77
+
+# debug complet
+DEBUG_OPT = -DDEBUG -g
+# version finale
+# DEBUG_OPT = -O
+
+# laisser le flag HP700 pour linux (ne sert que pour drand48 ds myrand)
+CXXFLAGS = $(DEBUG_OPT) -DHP700  $(INC_MACRO)
+CFLAGS = $(DEBUG_OPT)  $(INC_MACRO)
+
+LM = -lm
+LDFLAGS = -lm
+
+# le programme tar doit accepter l'option z: gtar sous HP, tar sous Linux
+TAR = tar

@@ -1,0 +1,93 @@
+#######     sauvegarde11
+#######################
+
+# 	La population
+# 	-------------
+POPULATION 10	# taille population
+
+# 	Criteres d'arret
+# 	----------------
+MAX_EVAL 10000	# Nbre max total d'evaluations de fitness
+MAX_GEN 0	# Nbre max de generations (si pas nbre d'eval)
+DEBUT 500	# Nbre minimal d'evaluations (ou de generations)
+FIN 200	# Nbre max d'evaluations (ou de generation) sans progres
+PERF_CIBLE Neant	# Valeur cible pour la perf 
+
+# 	Affichage
+# 	---------
+AFF_POP 1	# Niveau d'affichage population
+COURBE 0	# Frequence d'affichage courbe
+
+# 	Les sauvegardes/relectures
+# 	--------------------------
+FREQ_SAV 0	# Frequence des sauvegardes (0 = en fin de pgm only)
+NOM_SAV sauvegarde	# Prefixe des fichiers de sauvegarde (+ No gen)
+NOM_RES popu	# Nom du fichier de courbe (+.xg)
+RECALCUL_PERF 0	# Faut-il recalculer les perfs des chromos relus (0/1)
+
+# 	Schema d'evolution
+# 	------------------
+MAXIMISATION 1	# Maximisation (1) ou minimisation(0)
+EVOLUTION ES+	# Schema d'evolution (GAG, 'ES,', ES+, EP)
+LAMBDA 70	# Nombre d'enfants
+
+# 	Les croisements
+# 	---------------
+PCROIS 0.6	# Probabilite de croisement
+
+# 	Les mutations
+# 	-------------
+PMUT 1	# Proba de mutation par individu [0.1]
+STRATEGIE ADAPT	# Strategie de mutation : Fixe, un_cinq (regle des 1/5), un_adapt ou adapt
+TAU 1	# Adaptation globale du sigma local (* Schwefel's scale)
+TAU_LOC 1	# Adaptation locale du sigma local (* Schwefel's scale)
+SIGMA 0.3	# Valeur initiale du Sigma
+
+# 	Le probleme
+# 	-----------
+LA_PERF ROC	# Nom de la fonction perf (ROC)
+DATA Basile	# Nom du fichier des data
+BORNES 1	# Variables bornees (1) ou non (0) [1]
+LOG 0	# Codage log
+NEG 0	# Poids negatifs
+RUC 1	# Optimise Aire Roc
+Sing 1	# one class against all
+SRM 0.001	# Weight regularization L1
+NL 1	# Function assumed linear (1) or not (0)
+Multi 1	# Function min of k forms (1)
+##############################
+FICHIERS 0
+##############################
+EVALUATIONS 710
+##############################
+INDIVIDUS  10
+2550	2550 0.915173  0.704164  0.261458  0.624429  
+************************
+0.751406 0.151216 0.12242 1.14919 
+2550	2550 0.108353  0.326644  0.0523223  0.798358  
+************************
+11.0727 3.37815 1.76969 2.09236 
+2550	2550 0.489841  0.601841  0.793175  0.71914  
+************************
+0.109361 0.0560389 0.16167 0.145108 
+2550	2550 0.278885  0.670353  0.596476  0.610304  
+************************
+0.0543958 0.979844 0.0731736 0.455562 
+2550	2550 0.740354  0.157154  0.60044  0.443445  
+************************
+0.378407 0.988637 0.0714252 0.791141 
+2550	2550 0.498845  0.553452  0.958164  0.930961  
+************************
+0.0816743 0.184348 0.172915 0.448406 
+2550	2550 0.395789  0.494997  0.388223  0.712568  
+************************
+0.0912279 0.216436 0.465589 0.390521 
+2550	2550 0.116205  0.646012  0.953804  0.406779  
+************************
+3.67337 1.03748 1.66211 3.39444 
+2550	2550 0.554847  0.675505  0.0422391  0.687753  
+************************
+2.94027 0.85528 0.873777 0.802438 
+2550	2550 0.297044  0.356208  0.689891  0.149342  
+************************
+0.163047 0.195135 0.669239 0.421868 
