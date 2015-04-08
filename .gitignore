@@ -38,3 +38,13 @@ temp
 *.exe
 *.out
 *.app
+Roger
+
+# Local specific files
+Make.in
+## outdated
+Roger.weights
+popu.xg
+resul.roc.test
+resul.roc.train
+

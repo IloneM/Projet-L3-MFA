@@ -9,7 +9,7 @@
 # ----------------------------------------------------------------------
 
 # This is the root of project
-CXX_DIR=/home/ilone/Documents/Universite/L3/S6/Projet-temp
+CXX_DIR= /media/data/users/ilone/Documents/Universite/cursus/Licence/L3/S6/Projet
 
 RAL_DIR = $(CXX_DIR)/ral
 UTIL_DIR = $(CXX_DIR)/util
