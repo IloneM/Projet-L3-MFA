@@ -1,8 +1,12 @@
 #ifndef RP_CMA_H
 #define RP_CMA_H
 
+/*
+ * Importants points procedures seems to be eval for N_D and ask for n_d.
+ * A overall class must be implemented
+ */
+
 #include <Eigen/Eigen>
-//#include <functional>
 #include <eigenmvn.h>
 #include <cmaes.h>
 
