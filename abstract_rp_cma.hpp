@@ -11,6 +11,6 @@
 
 using namespace libcmaes;
 
-class RP_CMA : public CMAStrategy<CovarianceUpdate> {};
+class AbstractRpCMA : public CMAStrategy<CovarianceUpdate> {};
 
 #endif
