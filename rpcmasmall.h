@@ -1,7 +1,8 @@
 #ifndef RP_CMA_SMALL_H
 #define RP_CMA_SMALL_H
 
-#include "abstractrpcma.h"
+//#include "abstractrpcma.h"
+#include <cmaes.h>
 
 /*
  * Importants points procedures seems to be eval for N_D and ask for n_d.
@@ -11,18 +12,14 @@
 using namespace libcmaes;
 
 template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
-class RPCMASmall : public AbstractRPCMA<TCovarianceUpdate,TGenoPheno>
+class RPCMASmall : public CMAStrategy<TCovarianceUpdate,TGenoPheno>//AbstractRPCMA<TCovarianceUpdate,TGenoPheno>
 {
-protected:
-
-int _sdim;
-
 public:
 
       /**
        * \brief dummy constructor
        */
-      RPCMASmall() : AbstractRPCMA<TCovarianceUpdate,TGenoPheno>(), _sdim(0) {}
+      RPCMASmall() : CMAStrategy<TCovarianceUpdate,TGenoPheno>() {}
     
       /**
        * \brief constructor.
@@ -30,7 +27,7 @@ public:
        * @param parameters stochastic search parameters
        */
       RPCMASmall(FitFunc &func,
-		  CMAParameters<TGenoPheno> &parameters) : AbstractRPCMA<TCovarianceUpdate,TGenoPheno>(func, parameters), _sdim(SMALL_DIM) {}
+		  CMAParameters<TGenoPheno> &parameters) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, parameters) {}
 
       /**
        * \brief constructor for starting from an existing solution.
@@ -40,11 +37,11 @@ public:
        */
       RPCMASmall(FitFunc &func,
 		  CMAParameters<TGenoPheno> &parameters,
-		  const CMASolutions &cmasols) : AbstractRPCMA<TCovarianceUpdate,TGenoPheno>(func, parameters, cmasols), _sdim(SMALL_DIM) {}
-    
+		  const CMASolutions &cmasols) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, parameters, cmasols) {}
+/*    
 	  ~RPCMASmall() {
-			  ~AbstractRPCMA<TCovarianceUpdate,TGenoPheno>();
 	  }
+*/
 };
 
 #endif

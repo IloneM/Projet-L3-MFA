@@ -21,7 +21,7 @@ CPP_FILES = $(wildcard *.cpp)
 HPP_FILES = $(wildcard *.hpp)
 O_FILES = $(CPP_FILES:.cpp=.o)
 SRCS = $(CPP_FILES) $(HPP_FILES)
-EXEC = rp_cma
+EXEC = rpcma
 
 #### Dépendances ####
 all: $(EXEC)

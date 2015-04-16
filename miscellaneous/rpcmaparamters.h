@@ -1,10 +1,10 @@
 #ifndef RP_CMA_PARAMATERS_H
 #define RP_CMA_PARAMATERS_H
 
-//#include <Eigen/Eigen>
 #include <cmaparameters.h>
 
 /*
+ * More evolueded
  * Class wich includes some rp_cma specific parameters
  */
 
