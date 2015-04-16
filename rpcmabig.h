@@ -15,18 +15,28 @@
 
 using namespace libcmaes;
 
-template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
+template <class TCovarianceUpdate,class TGenoPheno>
 class RPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>//AbstractRPCMA<TCovarianceUpdate,TGenoPheno>
 {
 protected:
 
 //int _sdim;
 
-	RPCMASmall<TCovarianceUpdate,TGenoPheno>* sdimstrat;//small dimension strategy
+	RPCMASmall<TCovarianceUpdate,TGenoPheno>* _sdimstrat;//small dimension strategy
 
-	dMat randProjection;
+	dMat _randProjection;
+
+	dMat _candidates;
 
 public:
+
+	inline dMat candidates() {
+		return _candidates;
+	}
+
+	inline dMat randProjection() {
+		return _randProjection;
+	}
 
 	static dMat grp(int d, int D) {//generate random projection
 		dMat result(d,D);
@@ -61,14 +71,20 @@ public:
      */
     RPCMABig(FitFunc &func,
 	  CMAParameters<TGenoPheno> &params) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params),
-		randProjection(grp(SMALL_DIM, params.dim()))//, _sdim(SMALL_DIM)
+		_randProjection(grp(SMALL_DIM, params.dim()))//, _sdim(SMALL_DIM)
 	{
-		std::vector<double> fake_x0(SMALL_DIM,0);
-		CMAParameters<TGenoPheno> sparams(fake_x0, params.get_sigma_init(), params.lambda(), params.get_seed(), params.get_gp());
-		sparams.set_x0(randProjection * params.get_x0min(), randProjection * params.get_x0max());//set the true x0
+		//std::vector<double> fake_x0(SMALL_DIM,0);
+		//CMAParameters<TGenoPheno> sparams(fake_x0, params.get_sigma_init(), params.lambda(), params.get_seed(), params.get_gp());
+		//sparams.set_x0(_randProjection * params.get_x0min(), _randProjection * params.get_x0max());//set the true x0
+		CMAParameters<TGenoPheno> sparams = params;
+		sparams.set_dim(SMALL_DIM);
+		sparams.set_x0(_randProjection * params.get_x0min(), _randProjection * params.get_x0max());
 		sparams.initialize_parameters();
 
-		sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(func, sparams);
+		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(func, sparams, this);
+
+		_candidates = CMAStrategy<TCovarianceUpdate,TGenoPheno>::ask();
+		std::cout << _sdimstrat->ask();
 	}
 
     /**
@@ -82,7 +98,7 @@ public:
 	  const CMASolutions &cmasols) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params, cmasols) {}//, _sdim(SMALL_DIM) {}
 
 	~RPCMABig() {
-		delete sdimstrat;
+		delete _sdimstrat;
 	}
 
 };

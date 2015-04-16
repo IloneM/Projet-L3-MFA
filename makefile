@@ -18,7 +18,7 @@ CCCP = g++
 
 #### Fichiers ####
 CPP_FILES = $(wildcard *.cpp)
-HPP_FILES = $(wildcard *.hpp)
+HPP_FILES = $(wildcard *.hpp *.h)
 O_FILES = $(CPP_FILES:.cpp=.o)
 SRCS = $(CPP_FILES) $(HPP_FILES)
 EXEC = rpcma
@@ -26,7 +26,7 @@ EXEC = rpcma
 #### Dépendances ####
 all: $(EXEC)
 
-#main.o: $(HPP_FILES)
+main.o: $(HPP_FILES)
 %.o: %.cpp
 	@$(CCCP) $(CPPFLAGS) -o $@ -c $< $(LDFLAGS)
 
