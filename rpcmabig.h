@@ -6,7 +6,6 @@
 #include "rpcmasmall.h"
 
 #define SMALL_DIM 75
-#define PRECISION 10e-6
 
 /*
  * Importants points procedures seems to be eval for N_D and ask for n_d.
@@ -24,19 +23,9 @@ protected:
 
 	RPCMASmall<TCovarianceUpdate,TGenoPheno>* _sdimstrat;//small dimension strategy
 
-	dMat _randProjection;
-
 	dMat _candidates;
 
 public:
-
-	inline dMat candidates() {
-		return _candidates;
-	}
-
-	inline dMat randProjection() {
-		return _randProjection;
-	}
 
 	static dMat grp(int d, int D) {//generate random projection
 		dMat result(d,D);
@@ -59,6 +48,10 @@ public:
 		return result;
 	}
 
+	inline dMat candidates() {
+		return _candidates;
+	}
+
     /**
      * \brief dummy constructor
      */
@@ -70,18 +63,19 @@ public:
      * @param parameters stochastic search parameters
      */
     RPCMABig(FitFunc &func,
-	  CMAParameters<TGenoPheno> &params) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params),
-		_randProjection(grp(SMALL_DIM, params.dim()))//, _sdim(SMALL_DIM)
+	  CMAParameters<TGenoPheno> &params) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params)//,
+		//_randProjection(grp(SMALL_DIM, params.dim()))//, _sdim(SMALL_DIM)
 	{
+		dMat randProjection = grp(SMALL_DIM, params.dim());
 		//std::vector<double> fake_x0(SMALL_DIM,0);
 		//CMAParameters<TGenoPheno> sparams(fake_x0, params.get_sigma_init(), params.lambda(), params.get_seed(), params.get_gp());
 		//sparams.set_x0(_randProjection * params.get_x0min(), _randProjection * params.get_x0max());//set the true x0
 		CMAParameters<TGenoPheno> sparams = params;
 		sparams.set_dim(SMALL_DIM);
-		sparams.set_x0(_randProjection * params.get_x0min(), _randProjection * params.get_x0max());
+		sparams.set_x0(randProjection * params.get_x0min(), randProjection * params.get_x0max());
 		sparams.initialize_parameters();
 
-		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(func, sparams, this);
+		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(this, randProjection, func, sparams);
 
 		_candidates = CMAStrategy<TCovarianceUpdate,TGenoPheno>::ask();
 		std::cout << _sdimstrat->ask();

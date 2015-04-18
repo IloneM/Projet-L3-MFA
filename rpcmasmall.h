@@ -5,6 +5,8 @@
 #include <cmaes.h>
 #include "rpcmabig.h"
 
+#define PRECISION 10e-6
+
 /*
  * Importants points procedures seems to be eval for N_D and ask for n_d.
  * A overall class must be implemented
@@ -21,21 +23,39 @@ protected:
 
 	RPCMABig<TCovarianceUpdate,TGenoPheno>* _bdimstrat;
 
+	dMat _randProjection;
+
+	dMat _covarianceInverse;
+
 public:
+
+	inline dMat randProjection() {
+		return _randProjection;
+	}
+
+	inline double propFitness(dVec X) {//X belongs to big space
+		return _covarianceInverse * (_randPorjection * X - _esolver.mean())
+	}
+
+	void setCovarianceInverse(dMat newMatrix) {
+		_covarianceUpdate = ;
+	}
 
       /**
        * \brief dummy constructor
        */
-      RPCMASmall(RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(), _bdimstrat(bdimstrat) {}
+      RPCMASmall(RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat,
+					  dMat randProjection) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(), _bdimstrat(bdimstrat), _randProjection(randProjection) {}
     
       /**
        * \brief constructor.
        * @param func objective function to minimize
        * @param parameters stochastic search parameters
        */
-      RPCMASmall(FitFunc &func,
-		  CMAParameters<TGenoPheno> &parameters,
-		  RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, parameters), _bdimstrat(bdimstrat) {}
+      RPCMASmall(RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat,
+			dMat randProjection,
+			FitFunc &func,
+			CMAParameters<TGenoPheno> &parameters) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, parameters), _bdimstrat(bdimstrat), _randProjection(randProjection) {}
 
       /**
        * \brief constructor for starting from an existing solution.
@@ -43,14 +63,14 @@ public:
        * @param parameters stochastic search parameters
        * @param cmasols solution object to start from
        */
-      RPCMASmall(FitFunc &func,
+      RPCMASmall(RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat,
+		  dMat randProjection,
+		  FitFunc &func,
 		  CMAParameters<TGenoPheno> &parameters,
-		  const CMASolutions &cmasols,
-		  RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, parameters, cmasols), _bdimstrat(bdimstrat) {}
+		  const CMASolutions &cmasols) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, parameters, cmasols), _bdimstrat(bdimstrat), _randProjection(randProjection) {}
 
 	dMat ask() {
-//		std::cout << "big Mat: -cols: " << _bdimstrat->candidates().cols() << "\n-rows: " << _bdimstrat->candidates().rows() << "\nproj: -cols: " << _bdimstrat->randProjection().cols() << "-rows: " << _bdimstrat->randProjection().rows();
-		return _bdimstrat->randProjection() *  _bdimstrat->candidates();
+		return _randProjection *  _bdimstrat->candidates();
 	}
 
 /*    
