@@ -5,8 +5,6 @@
 #include <cmaes.h>
 #include "rpcmasmall.h"
 
-#define SMALL_DIM 75
-
 /*
  * Importants points procedures seems to be eval for N_D and ask for n_d.
  * A overall class must be implemented
@@ -25,31 +23,16 @@ protected:
 
 	dMat _candidates;
 
+	HyperParameters _hp;
+
 public:
-
-	static dMat grp(int d, int D) {//generate random projection
-		dMat result(d,D);
-
-		for(int i=0; i< d; i++) {
-			Eigen::RowVectorXd randVector = Eigen::RowVectorXd::Random(D);
-
-			Eigen::RowVectorXd newBasisCandidate = randVector;
-
-			for(unsigned int j=0; j< i; j++) {
-				newBasisCandidate -= result.row(j) * randVector.dot(result.row(j));//we don't need to divide by result.row(j).norm() cause all vectors are normalized
-			}
-
-			if(newBasisCandidate.norm() > PRECISION) {
-				result.row(i) = newBasisCandidate / newBasisCandidate.norm();
-			} else {
-				i--;
-			}
-		}
-		return result;
-	}
 
 	inline dMat candidates() {
 		return _candidates;
+	}
+
+	inline HyperParameters hp() {
+		return _hp;
 	}
 
     /**
@@ -63,22 +46,17 @@ public:
      * @param parameters stochastic search parameters
      */
     RPCMABig(FitFunc &func,
-	  CMAParameters<TGenoPheno> &params) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params)//,
+	  CMAParameters<TGenoPheno> &bparams)//,
 		//_randProjection(grp(SMALL_DIM, params.dim()))//, _sdim(SMALL_DIM)
 	{
-		dMat randProjection = grp(SMALL_DIM, params.dim());
-		//std::vector<double> fake_x0(SMALL_DIM,0);
-		//CMAParameters<TGenoPheno> sparams(fake_x0, params.get_sigma_init(), params.lambda(), params.get_seed(), params.get_gp());
-		//sparams.set_x0(_randProjection * params.get_x0min(), _randProjection * params.get_x0max());//set the true x0
-		CMAParameters<TGenoPheno> sparams = params;
-		sparams.set_dim(SMALL_DIM);
-		sparams.set_x0(randProjection * params.get_x0min(), randProjection * params.get_x0max());
-		sparams.initialize_parameters();
-
-		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(this, randProjection, func, sparams);
-
-		_candidates = CMAStrategy<TCovarianceUpdate,TGenoPheno>::ask();
-		std::cout << _sdimstrat->ask();
+		bparams.set_str_algo("sepacmaes");
+		/*
+		 * As algorithm isn't changed by initialize_parameters, we don't call the procedure. Must evoluate as library does
+		 */
+//		bparams.initialize_parameters();
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, bparams);
+		
+		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(_hp.d(), this);
 	}
 
     /**
@@ -95,6 +73,21 @@ public:
 		delete _sdimstrat;
 	}
 
+	dMat ask() {
+		int lambda = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda();
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_lambda(_hp.k());
+
+		dMat pop(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), lambda);
+		dMat candidates(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), _hp.k());
+
+		for(int i=0; i< lambda; i++) {
+			candidates = CMAStrategy<TCovarianceUpdate,TGenoPheno>::ask();
+			pop.col(i) = _sdimstrat->bestCandidate(candidates);
+		}
+
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_lambda(lambda);
+		return pop;
+	}
 };
 
 //template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
