@@ -1,7 +1,6 @@
 #ifndef RP_CMA_BIG_H
 #define RP_CMA_BIG_H
 
-//#include "abstractrpcma.h"
 #include <cmaes.h>
 #include "rpcmasmall.h"
 
@@ -13,11 +12,9 @@
 using namespace libcmaes;
 
 template <class TCovarianceUpdate,class TGenoPheno>
-class RPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>//AbstractRPCMA<TCovarianceUpdate,TGenoPheno>
+class RPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
 {
 protected:
-
-//int _sdim;
 
 	RPCMASmall<TCovarianceUpdate,TGenoPheno>* _sdimstrat;//small dimension strategy
 
@@ -38,22 +35,18 @@ public:
     /**
      * \brief dummy constructor
      */
-    RPCMABig() : CMAStrategy<TCovarianceUpdate,TGenoPheno>() {}//, _sdim(0) {}
-  
+/*
+    RPCMABig() : CMAStrategy<TCovarianceUpdate,TGenoPheno>() {}
+*/
     /**
      * \brief constructor.
      * @param func objective function to minimize
      * @param parameters stochastic search parameters
      */
     RPCMABig(FitFunc &func,
-	  CMAParameters<TGenoPheno> &bparams)//,
-		//_randProjection(grp(SMALL_DIM, params.dim()))//, _sdim(SMALL_DIM)
+	  CMAParameters<TGenoPheno> &bparams)
 	{
 		bparams.set_str_algo("sepacmaes");
-		/*
-		 * As algorithm isn't changed by initialize_parameters, we don't call the procedure. Must evoluate as library does
-		 */
-//		bparams.initialize_parameters();
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, bparams);
 		
 		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(_hp.d(), this);
@@ -65,10 +58,11 @@ public:
      * @param parameters stochastic search parameters
      * @param cmasols solution object to start from
      */
+/*
     RPCMABig(FitFunc &func,
 	  CMAParameters<TGenoPheno> &params,
-	  const CMASolutions &cmasols) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params, cmasols) {}//, _sdim(SMALL_DIM) {}
-
+	  const CMASolutions &cmasols) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params, cmasols) {}
+*/
 	~RPCMABig() {
 		delete _sdimstrat;
 	}
@@ -89,9 +83,6 @@ public:
 		return pop;
 	}
 };
-
-//template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
-//class RPCMA : public RPCMABig<TCovarianceUpdate,TGenoPheno> {};
 
 #endif
 
