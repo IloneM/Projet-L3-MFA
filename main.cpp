@@ -31,6 +31,8 @@ int main(int argc, char* argv[]) {
 
 	RPCMABig<CovarianceUpdate> instance(fsphere, cmaparams);
 
+	std::cout << instance.ask() << "\n";
+
 	return 0;
 }
 

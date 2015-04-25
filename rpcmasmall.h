@@ -25,6 +25,12 @@ protected:
 	dMat _randProjection;
 
 public:
+/*
+	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) {
+		params.
+		return params;
+	}
+*/		
 
       /**
        * \brief dummy constructor
@@ -38,13 +44,11 @@ public:
        * @param func objective function to minimize
        * @param parameters stochastic search parameters
        */
-      RPCMASmall(const int d, RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : _bdimstrat(bdimstrat),
-		_randProjection(grp(d, bdimstrat->get_parameters().dim())) {
+      RPCMASmall(CMAParameters<TGenoPheno> sparams, RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(fnull, sparams),
+		_bdimstrat(bdimstrat),
+		_randProjection(grp(sparams.dim(), bdimstrat->get_parameters().dim())) {
 
-		CMAParameters<TGenoPheno> sparams(d, new double[d], bdimstrat->get_parameters().get_sigma_init());
-		sparams.set_x0(_randProjection * sparams.get_x0min(), _randProjection * sparams.get_x0max());
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>(fnull, sparams);
-
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_x0(_randProjection * bdimstrat->get_parameters().get_x0min(), _randProjection * bdimstrat->get_parameters().get_x0max());
 	  }
 
       /**
@@ -99,8 +103,13 @@ public:
        * @param X the point to evaluate. Note X belongs to big space.
        */
 	inline double probabilityFitness(dVec X) {
-		dMat halfValue = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() * (_randProjection * X - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.xmean());
-		return halfValue.transpose() * halfValue;
+		//dVec halfValue = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() * (_randProjection * X - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.xmean());
+		//return halfValue.transpose() * halfValue;
+		//	std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv().cols();
+			std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.cov().inverse() << "\n";
+			std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() << "\n";
+			std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.sepcsqinv() << "\n";
+		return (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() * (_randProjection * X - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.xmean())).squaredNorm();
 	}
 
       /**

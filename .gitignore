@@ -7,14 +7,14 @@ old/*
 tmp
 temp
 
-# submodules dirs
-#libcmaes
-
 # Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
+
+# dependencies
+*.d
 
 # Precompiled Headers
 *.gch
@@ -38,4 +38,7 @@ temp
 *.exe
 *.out
 *.app
+
+# specific executable
+rpcma
 

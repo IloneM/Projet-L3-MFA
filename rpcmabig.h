@@ -24,12 +24,9 @@ protected:
 
 public:
 
-	inline dMat candidates() {
-		return _candidates;
-	}
-
-	inline HyperParameters hp() {
-		return _hp;
+	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) {
+		params.set_str_algo("sepacmaes");
+		return params;
 	}
 
     /**
@@ -44,12 +41,13 @@ public:
      * @param parameters stochastic search parameters
      */
     RPCMABig(FitFunc &func,
-	  CMAParameters<TGenoPheno> &bparams)
+	  CMAParameters<TGenoPheno> &bparams) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, setupParameters(bparams))
 	{
-		bparams.set_str_algo("sepacmaes");
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, bparams);
-		
-		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(_hp.d(), this);
+//		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_str_algo("sepacmaes");
+		CMAParameters<TGenoPheno> sparams(_hp.d(), new double[_hp.d()], bparams.get_sigma_init());//should be initialize here as prevent compilation if done in rpcmasmall (not considered as referencce)
+		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(sparams, this);
+
+//		std::cout << ask();
 	}
 
     /**
@@ -67,9 +65,17 @@ public:
 		delete _sdimstrat;
 	}
 
+	inline dMat candidates() {
+		return _candidates;
+	}
+
+	inline HyperParameters hp() {
+		return _hp;
+	}
+
 	dMat ask() {
 		int lambda = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda();
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_lambda(_hp.k());
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._lambda = _hp.k();
 
 		dMat pop(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), lambda);
 		dMat candidates(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), _hp.k());
@@ -79,7 +85,7 @@ public:
 			pop.col(i) = _sdimstrat->bestCandidate(candidates);
 		}
 
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_lambda(lambda);
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._lambda = lambda;
 		return pop;
 	}
 };
