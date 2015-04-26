@@ -32,9 +32,9 @@ public:
 		return params;
 	}
 
-	void/*CMAParameters<TGenoPheno>&*/ setupSmallParameters(CMAParameters<TGenoPheno>& params) {
+	CMAParameters<TGenoPheno>& setupSmallParameters(CMAParameters<TGenoPheno>& params) {
 		params.set_uh(false);
-		//return params;
+		return params;
 	}
 
     /**
