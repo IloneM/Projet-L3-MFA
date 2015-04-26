@@ -4,11 +4,6 @@
 #include <cmaes.h>
 #include "hyperparameters.h"
 
-/*
- * Importants points procedures seems to be eval for N_D and ask for n_d.
- * A overall class must be implemented
- */
-
 namespace libcmaes {
 
 FitFunc fnull = [](const double *x, const int N) {return 0;};
@@ -29,10 +24,7 @@ public:
       /**
        * \brief dummy constructor
        */
-/*
-      RPCMASmall(RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat,
-					  dMat randProjection) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(), _bdimstrat(bdimstrat), _randProjection(randProjection) {}
-*/  
+
       /**
        * \brief constructor. We assume bdimstrat to be fully setup in way to use its properties
        * @param func objective function to minimize
@@ -55,13 +47,6 @@ public:
        * @param parameters stochastic search parameters
        * @param cmasols solution object to start from
        */
-/*
-      RPCMASmall(RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat,
-		  dMat randProjection,
-		  FitFunc &func,
-		  CMAParameters<TGenoPheno> &parameters,
-		  const CMASolutions &cmasols) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, parameters, cmasols), _bdimstrat(bdimstrat), _randProjection(randProjection) {}
-*/
 
 	~RPCMASmall() {}
 
@@ -156,9 +141,6 @@ public:
        * @param X the point to evaluate. Note X belongs to big space.
        */
 	inline double probabilityFitness(dVec X) {
-		//dVec halfValue = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() * (_randProjection * X - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.xmean());
-		//return halfValue.transpose() * halfValue;
-		//	std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv().cols();
 		return (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() * (_randProjection * X - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.xmean())).squaredNorm();
 	}
 
@@ -168,7 +150,7 @@ public:
        */
 	dVec bestCandidate(dMat candidates) {
 		if(candidates.rows() < 1) {//should not occur in normal process
-			//throw exception or compute error
+			//TODO: throw exception or compute error
 			return dVec();//empty vector
 		}
 		dVec max(candidates.rows());
@@ -186,11 +168,6 @@ public:
 
 		return max;
 	}
-/*
-	dMat ask() {
-		return _randProjection *  _bdimstrat->candidates();
-	}
-*/
 };
 
 }

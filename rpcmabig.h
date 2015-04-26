@@ -5,8 +5,7 @@
 #include "rpcmasmall.h"
 
 /*
- * Importants points procedures seems to be eval for N_D and ask for n_d.
- * A overall class must be implemented
+ * TODO: See why elapsed time isn't present
  */
 
 namespace libcmaes
@@ -17,12 +16,11 @@ class RPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
 {
 protected:
 
-	RPCMASmall<TCovarianceUpdate,TGenoPheno>* _sdimstrat;//small dimension strategy
+	//small dimension strategy
+	RPCMASmall<TCovarianceUpdate,TGenoPheno>* _sdimstrat;
 
 	//this pointer is just intended to save the parameters set by the user for rpcmasmall purpose before forwading it to parent
 	CMAParameters<TGenoPheno> _sparams;
-
-//	dMat _candidates;
 
 	HyperParameters _hp;
 
@@ -30,8 +28,6 @@ public:
 
 	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) {
 		//save the parameters for rpcmasmall purpose
-		//_sparams = new CMAParameters<TGenoPheno>(params);
-		//should be initialize here as prevent compilation if done in rpcmasmall (not considered as referencce)
 		params.set_str_algo("sepacmaes");
 		return params;
 	}
@@ -40,14 +36,7 @@ public:
 		params.set_uh(false);
 		//return params;
 	}
-/*
-	dMat setupRPCMASmall(int d, int d, CMAParameters<TGenoPheno>& params) {
-		dMat randProjection(RPCMASmall::grp(d, D));
-		params.set_x0(randProjection * _bdimstrat->get_parameters().get_x0min(),
-					randProjection * _bdimstrat->get_parameters().get_x0max());
-		return params;
-	}
-*/
+
     /**
      * \brief dummy constructor
      */
@@ -62,16 +51,11 @@ public:
     RPCMABig(FitFunc &func,
 	  CMAParameters<TGenoPheno> &bparams) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, setupParameters(bparams)),
 			_sparams(_hp.d(), new double[_hp.d()], bparams.get_sigma_init(), -1, bparams.get_seed(), bparams.get_gp()) {
-//		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_str_algo("sepacmaes");
-		//CMAParameters<TGenoPheno> sparams(_hp.d(), new double[_hp.d()], bparams.get_sigma_init());//should be initialize here as prevent compilation if done in rpcmasmall (not considered as referencce)
 		setupSmallParameters(_sparams);
 		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(_sparams, this);
-
 		/*
-		 * for multi RPCMA maybe use a different var for sparams
+		 * for multi RPCMA maybe create another var for sparams
 		 */
-
-//		std::cout << ask();
 	}
 
     /**
@@ -80,20 +64,11 @@ public:
      * @param parameters stochastic search parameters
      * @param cmasols solution object to start from
      */
-/*
-    RPCMABig(FitFunc &func,
-	  CMAParameters<TGenoPheno> &params,
-	  const CMASolutions &cmasols) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, params, cmasols) {}
-*/
+
 	~RPCMABig() {
 		delete _sdimstrat;
-//		delete _sparams;
 	}
 /*
-	inline dMat candidates() const {
-		return _candidates;
-	}
-
 	inline HyperParameters hp() const {
 		return _hp;
 	}
