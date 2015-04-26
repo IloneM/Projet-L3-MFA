@@ -9,7 +9,7 @@
  * A overall class must be implemented
  */
 
-using namespace libcmaes;
+namespace libcmaes {
 
 FitFunc fnull = [](const double *x, const int N) {return 0;};
 
@@ -25,12 +25,6 @@ protected:
 	dMat _randProjection;
 
 public:
-/*
-	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) {
-		params.
-		return params;
-	}
-*/		
 
       /**
        * \brief dummy constructor
@@ -43,11 +37,15 @@ public:
        * \brief constructor. We assume bdimstrat to be fully setup in way to use its properties
        * @param func objective function to minimize
        * @param parameters stochastic search parameters
+	   *
+	   * \warn _bdimstrat and _randProjection must be set before calling parent constructor
+	   *
        */
-      RPCMASmall(CMAParameters<TGenoPheno> sparams, RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(fnull, sparams),
+      RPCMASmall(CMAParameters<TGenoPheno> sparams, RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : 
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>(fnull, sparams),
 		_bdimstrat(bdimstrat),
 		_randProjection(grp(sparams.dim(), bdimstrat->get_parameters().dim())) {
-
+		//is licit since others values depending of x0 evoluates as x0 does (no one at wrtiting moment)
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_x0(_randProjection * bdimstrat->get_parameters().get_x0min(), _randProjection * bdimstrat->get_parameters().get_x0max());
 	  }
 
@@ -66,6 +64,61 @@ public:
 */
 
 	~RPCMASmall() {}
+
+  void eval(const dMat &candidates, const dMat &phenocandidates=dMat(0,0))
+  {
+#ifdef HAVE_DEBUG
+    std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
+#endif
+    // one candidate per row.
+#pragma omp parallel for if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._mt_feval)
+    for (int r=0;r<candidates.cols();r++)
+      {
+	CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._candidates.at(r).set_x(candidates.col(r));
+	CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._candidates.at(r).set_id(r);
+	CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._candidates.at(r).set_fvalue(_bdimstrat->get_solutions()._candidates.at(r).get_fvalue());
+	
+	//std::cerr << "candidate x: " << _solutions._candidates.at(r)._x.transpose() << std::endl;
+      }
+    
+    // if an elitist is active, reinject initial solution as needed.
+    if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_niter > 0 && (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._elitist || CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._initial_elitist || (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_initial_elitist && CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._initial_elitist_on_restart)))
+      {
+	// get reference values.
+	double ref_fvalue = std::numeric_limits<double>::max();
+	Candidate ref_candidate;
+	
+	if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._initial_elitist_on_restart || CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._initial_elitist)
+	  {
+	    ref_fvalue = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._initial_candidate.get_fvalue();
+	    ref_candidate = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._initial_candidate;
+	  }
+	else if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._elitist)
+	  {
+	    ref_fvalue = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._best_seen_candidate.get_fvalue();
+	    ref_candidate = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._best_seen_candidate;
+	  }
+
+	// reinject intial solution if half or more points have value above that of the initial point candidate.
+	int count = 0;
+	for (int r=0;r<candidates.cols();r++)
+	  if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._candidates.at(r).get_fvalue() < ref_fvalue)
+	    ++count;
+	if (count/2.0 < candidates.cols()/2)
+	  {
+#ifdef HAVE_DEBUG
+	    std::cout << "reinjecting solution=" << ref_fvalue << std::endl;
+#endif
+	    CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._candidates.at(1) = ref_candidate;
+	  }
+      }
+    
+#ifdef HAVE_DEBUG
+    std::chrono::time_point<std::chrono::system_clock> tstop = std::chrono::system_clock::now();
+    CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._elapsed_eval = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
+#endif
+  }
+	
 
       /**
        * \brief Generate a Random Projection from big to small space
@@ -106,9 +159,6 @@ public:
 		//dVec halfValue = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() * (_randProjection * X - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.xmean());
 		//return halfValue.transpose() * halfValue;
 		//	std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv().cols();
-			std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.cov().inverse() << "\n";
-			std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() << "\n";
-			std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.sepcsqinv() << "\n";
 		return (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.csqinv() * (_randProjection * X - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions.xmean())).squaredNorm();
 	}
 
@@ -142,6 +192,8 @@ public:
 	}
 */
 };
+
+}
 
 #endif
 

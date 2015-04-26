@@ -9,7 +9,8 @@
  * A overall class must be implemented
  */
 
-using namespace libcmaes;
+namespace libcmaes
+{
 
 template <class TCovarianceUpdate,class TGenoPheno>
 class RPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
@@ -18,17 +19,35 @@ protected:
 
 	RPCMASmall<TCovarianceUpdate,TGenoPheno>* _sdimstrat;//small dimension strategy
 
-	dMat _candidates;
+	//this pointer is just intended to save the parameters set by the user for rpcmasmall purpose before forwading it to parent
+	CMAParameters<TGenoPheno> _sparams;
+
+//	dMat _candidates;
 
 	HyperParameters _hp;
 
 public:
 
 	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) {
+		//save the parameters for rpcmasmall purpose
+		//_sparams = new CMAParameters<TGenoPheno>(params);
+		//should be initialize here as prevent compilation if done in rpcmasmall (not considered as referencce)
 		params.set_str_algo("sepacmaes");
 		return params;
 	}
 
+	void/*CMAParameters<TGenoPheno>&*/ setupSmallParameters(CMAParameters<TGenoPheno>& params) {
+		params.set_uh(false);
+		//return params;
+	}
+/*
+	dMat setupRPCMASmall(int d, int d, CMAParameters<TGenoPheno>& params) {
+		dMat randProjection(RPCMASmall::grp(d, D));
+		params.set_x0(randProjection * _bdimstrat->get_parameters().get_x0min(),
+					randProjection * _bdimstrat->get_parameters().get_x0max());
+		return params;
+	}
+*/
     /**
      * \brief dummy constructor
      */
@@ -41,11 +60,16 @@ public:
      * @param parameters stochastic search parameters
      */
     RPCMABig(FitFunc &func,
-	  CMAParameters<TGenoPheno> &bparams) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, setupParameters(bparams))
-	{
+	  CMAParameters<TGenoPheno> &bparams) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, setupParameters(bparams)),
+			_sparams(_hp.d(), new double[_hp.d()], bparams.get_sigma_init(), -1, bparams.get_seed(), bparams.get_gp()) {
 //		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.set_str_algo("sepacmaes");
-		CMAParameters<TGenoPheno> sparams(_hp.d(), new double[_hp.d()], bparams.get_sigma_init());//should be initialize here as prevent compilation if done in rpcmasmall (not considered as referencce)
-		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(sparams, this);
+		//CMAParameters<TGenoPheno> sparams(_hp.d(), new double[_hp.d()], bparams.get_sigma_init());//should be initialize here as prevent compilation if done in rpcmasmall (not considered as referencce)
+		setupSmallParameters(_sparams);
+		_sdimstrat = new RPCMASmall<TCovarianceUpdate,TGenoPheno>(_sparams, this);
+
+		/*
+		 * for multi RPCMA maybe use a different var for sparams
+		 */
 
 //		std::cout << ask();
 	}
@@ -63,16 +87,17 @@ public:
 */
 	~RPCMABig() {
 		delete _sdimstrat;
+//		delete _sparams;
 	}
-
-	inline dMat candidates() {
+/*
+	inline dMat candidates() const {
 		return _candidates;
 	}
 
-	inline HyperParameters hp() {
+	inline HyperParameters hp() const {
 		return _hp;
 	}
-
+*/
 	dMat ask() {
 		int lambda = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda();
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._lambda = _hp.k();
@@ -88,7 +113,20 @@ public:
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._lambda = lambda;
 		return pop;
 	}
+
+	void eval(const dMat &candidates, const dMat &phenocandidates=dMat(0,0)) {
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::eval(candidates, phenocandidates);
+		_sdimstrat->eval(_sdimstrat->randProjection() * candidates);
+	}
+
+	void tell() {
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::tell();
+		_sdimstrat->tell();
+	}
+
 };
+
+}
 
 #endif
 

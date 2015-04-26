@@ -1,7 +1,7 @@
 #ifndef RP_CMA_HP_H
 #define RP_CMA_HP_H
 
-#define SMALL_DIM 75
+#define SMALL_DIM 40
 #define PRECISION 10e-6
 #define K 10
 

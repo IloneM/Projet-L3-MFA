@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <opti_err.h>
 
 using namespace libcmaes;
 
@@ -31,7 +32,11 @@ int main(int argc, char* argv[]) {
 
 	RPCMABig<CovarianceUpdate> instance(fsphere, cmaparams);
 
-	std::cout << instance.ask() << "\n";
+	if(instance.optimize() == OPTI_SUCCESS) {
+		std::cout << instance.get_solutions() << "\n";
+	} else {
+		std::cout << "errors occurs...\n";
+	}
 
 	return 0;
 }
