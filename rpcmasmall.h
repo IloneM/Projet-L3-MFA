@@ -19,6 +19,16 @@ protected:
 
 	dMat _randProjection;
 
+    /**
+     * \brief Setup parameters for small dimension strategy
+     * @param parameters forwarded by big dimension strategy
+     */
+	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) const {
+		params.set_uh(false);
+		params.initialize_parameters();
+		return params;
+	}
+
 public:
 
       /**
@@ -34,7 +44,7 @@ public:
 	   *
        */
       RPCMASmall(CMAParameters<TGenoPheno> sparams, RPCMABig<TCovarianceUpdate,TGenoPheno>* bdimstrat) : 
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>(fnull, sparams),
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>(fnull, setupParameters(sparams)),
 		_bdimstrat(bdimstrat),
 		_randProjection(grp(sparams.dim(), bdimstrat->get_parameters().dim())) {
 		//is licit since others values depending of x0 evoluates as x0 does (no one at wrtiting moment)
@@ -49,7 +59,7 @@ public:
        */
 
 	~RPCMASmall() {}
-
+/*
   void eval(const dMat &candidates, const dMat &phenocandidates=dMat(0,0))
   {
 #ifdef HAVE_DEBUG
@@ -103,7 +113,17 @@ public:
     CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._elapsed_eval = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
 #endif
   }
-	
+*/	
+    /**
+     * \brief Build the fvalue copying it from RPCMABig candidate
+	 * @param the column of the candidate to be evaluated
+	 * @param the candidates stored as column of the matrix
+	 * @return the computed function value
+     */
+	inline double build_fvalue(const int &col, const dMat& candidates)
+      {
+      return _bdimstrat->get_solutions()._candidates.at(col).get_fvalue();
+      }
 
       /**
        * \brief Generate a Random Projection from big to small space
