@@ -34,7 +34,6 @@ protected:
 	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) {
 		//save the parameters for rpcmasmall purpose
 		_backupParams = new CMAParameters<TGenoPheno>(params);
-		//_backupParams = new CMAParameters<TGenoPheno>(40,new double[40], params.get_sigma_init(), params.lambda(), params.get_seed(), params.get_gp());
 		//set it up for future uses
 		params.set_str_algo("sepacmaes");
 		params.initialize_parameters();
@@ -48,21 +47,12 @@ protected:
      */
 	CMAParameters<TGenoPheno>& setupDim(CMAParameters<TGenoPheno>& params, const int& d) const {
 		params._dim = d;
-		//params._lambda = CMAParameters<TGenoPheno>::build_lambda(d);
 		//prevents x0 conflicting with dim
 		params.set_x0(0.0);
 		params.initialize_parameters();
 		return params;
 	}
 
-		/* 
-		 * for erp-cma {
-		 */
-		//CMAParameters<TGenoPheno> sparams = _sparams;
-		//return new RPCMASmall<TCovarianceUpdate,TGenoPheno>(setupSDimParameters(sparams), this)
-		/* 
-		 * }
-		 */
     /**
      * \brief Build a new Small dimension strategy with dimension of d and sparams parameters
      * @param original parameters usually set by user
@@ -104,13 +94,8 @@ public:
 		delete _sdimstrat;
 		delete _backupParams;
 	}
-/*
-	inline HyperParameters hp() const {
-		return _hp;
-	}
-*/
+
 	dMat ask() {
-//		std::cout << "i'm used!\n";
 		_sdimstrat->ask();
 		int lambda = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda();
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._lambda = _hp.k();
