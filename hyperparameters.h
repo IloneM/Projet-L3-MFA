@@ -1,9 +1,9 @@
 #ifndef RP_CMA_HP_H
 #define RP_CMA_HP_H
 
-#define SMALL_DIM 40
+#define SMALL_DIM 50
 #define PRECISION 10e-6
-#define K 10
+#define K 40
 
 class HyperParameters {
 public:

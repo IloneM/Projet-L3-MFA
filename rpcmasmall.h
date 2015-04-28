@@ -13,6 +13,7 @@ template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>> c
 template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
 class RPCMASmall : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
 {
+      //template <class U, class V> friend class RPCMABig;
 protected:
 
 	RPCMABig<TCovarianceUpdate,TGenoPheno>* _bdimstrat;
@@ -25,6 +26,7 @@ protected:
      */
 	CMAParameters<TGenoPheno>& setupParameters(CMAParameters<TGenoPheno>& params) const {
 		params.set_uh(false);
+		params.set_str_algo("cmaes");
 		params.initialize_parameters();
 		return params;
 	}
@@ -130,6 +132,15 @@ public:
 		}
 
 		return max;
+	}
+
+      /**
+       * \brief Actually just make a call to initialize_esolver_and_solutions
+       * @return Empty matrix
+       */
+	dMat ask() {
+		CMAStrategy<TCovarianceUpdate,TGenoPheno>::initialize_esolver_and_solutions();
+		return dMat();
 	}
 };
 
