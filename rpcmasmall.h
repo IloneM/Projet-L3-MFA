@@ -3,6 +3,8 @@
 
 #include <cmaes.h>
 #include "hyperparameters.h"
+#include <random>
+//#include <limits>
 
 namespace libcmaes {
 
@@ -65,7 +67,7 @@ public:
 	 * @param the candidates stored as column of the matrix
 	 * @return the computed function value
      */
-	inline double build_fvalue(const int &col, const dMat& candidates)
+	virtual inline double build_fvalue(const int &col, const dMat& candidates)
       {
       return _bdimstrat->get_solutions()._candidates.at(col).get_fvalue();
       }
@@ -74,15 +76,21 @@ public:
        * \brief Generate a Random Projection from big to small space
        * @param d is the small dimension
 	   * @param D is the big dimension
-	   * TODO: try to make random as in enmvn.h
        */
 	static dMat grp(int d, int D) {
 		dMat result(d,D);
 
-		for(int i=0; i< d; i++) {
-			Eigen::RowVectorXd randVector = Eigen::RowVectorXd::Random(D);
+		std::random_device rd;
+		std::normal_distribution<double> norm(0.0,1.0);
+		std::mt19937 gen(rd());
 
-			Eigen::RowVectorXd newBasisCandidate = randVector;
+		Eigen::RowVectorXd randVector(D);
+		Eigen::RowVectorXd newBasisCandidate(D);
+
+		for(int i=0; i< d; i++) {
+			for (int j=0; j< D; j++) {
+				newBasisCandidate(j) = randVector(j) = norm(gen);
+			}
 
 			for(int j=0; j< i; j++) {
 				newBasisCandidate -= result.row(j) * randVector.dot(result.row(j));//we don't need to divide by result.row(j).norm() cause all vectors are normalized
@@ -138,7 +146,7 @@ public:
        * \brief Actually just make a call to initialize_esolver_and_solutions
        * @return Empty matrix
        */
-	dMat ask() {
+	virtual dMat ask() {
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>::initialize_esolver_and_solutions();
 		return dMat();
 	}
