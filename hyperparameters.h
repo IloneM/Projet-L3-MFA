@@ -3,7 +3,7 @@
 
 #define SMALL_DIM 40
 #define PRECISION 10e-6
-#define K 20
+#define K 100
 
 class HyperParameters {
 public:

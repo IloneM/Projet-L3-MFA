@@ -4,10 +4,6 @@
 #include <cmaes.h>
 #include "rpcmasmall.h"
 
-/*
- * TODO: See why elapsed time isn't present
- */
-
 namespace libcmaes
 {
 
@@ -219,66 +215,7 @@ public:
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>::tell();
 		_sdimstrat->tell();
 	}
-
-	/**
-      * \brief Stops search on a set of termination criterias, see reference paper.
-      * @return true if search must stop, false otherwise.
-      */
-	/*
-	virtual bool stop() {
-		//std::cout << "using it!\n";
-		//CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._sep = false;
-		bool res = CMAStrategy<TCovarianceUpdate,TGenoPheno>::stop();
-		//CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._sep = true;
-		return res;
-	}*/
-	/*
-  virtual bool stop()
-  {
-    if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._run_status < 0) { 
-	std::cout << "Is an error\n";
-      return true;
-	} // an error occured, most likely out of memory at cov matrix creation.
-    
-    if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_pfunc(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters,CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions)) // progress function.
-	{
-	std::cout << "Is the progress func\n";
-      return true; // end on progress function internal termination, possibly custom.
-	}
-    
-    if (!CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._fplot.empty())
-      CMAStrategy<TCovarianceUpdate,TGenoPheno>::plot();
-    
-    if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_niter == 0)
-      return false;
-
-    if ((CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._run_status = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_stopcriteria.stop(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters,CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions)) != CONT)
-	{
-	std::cout << "Is the stop criterea\n";
-      return true;
-	}
-    else return false;
-  }
-*/
-      /**
-       * \brief Finds the minimum of the objective function. It makes
-       *        alternate calls to ask(), tell() and stop() until 
-       *        one of the termination criteria triggers.
-       * @return success or error code, as defined in opti_err.h
-       * Note: the termination criteria code is held by _solutions._run_status
-       */
-  /*
-    int optimize()
-    {
-      return CMAStrategy<TCovarianceUpdate,TGenoPheno>::optimize(
-		      std::bind(&RPCMABig<TCovarianceUpdate,TGenoPheno>::eval,this,std::placeholders::_1,std::placeholders::_2),
-		      std::bind(&RPCMABig<TCovarianceUpdate,TGenoPheno>::ask,this),
-		      std::bind(&RPCMABig<TCovarianceUpdate,TGenoPheno>::tell,this));
-//		      std::bind(&RPCMABig<TCovarianceUpdate,TGenoPheno>::stop,this));
-    }
-*/
 };
-
 }
 
 #endif

@@ -15,7 +15,6 @@ template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>> c
 template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
 class RPCMASmall : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
 {
-      //template <class U, class V> friend class RPCMABig;
 protected:
 
 	RPCMABig<TCovarianceUpdate,TGenoPheno>* _bdimstrat;
