@@ -8,7 +8,7 @@ namespace libcmaes
 {
 
 template <class TCovarianceUpdate,class TGenoPheno>
-class RPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
+class ERPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
 {
 protected:
 

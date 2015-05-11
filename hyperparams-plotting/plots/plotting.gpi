@@ -1,4 +1,4 @@
-#set logscale z
+set logscale z
 #set title "best minimum of the function"
 set xlabel "K"
 set ylabel "d"
