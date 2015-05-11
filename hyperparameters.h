@@ -7,9 +7,9 @@
 
 class HyperParameters {
 public:
-	const static int _d = SMALL_DIM;
+	static int _d; //= SMALL_DIM;
 	constexpr static double eps = PRECISION;
-	const static int _k = K;
+	static int _k; //= K;
 
 	inline static int d() {
 		return _d;
@@ -19,6 +19,9 @@ public:
 		return _k;
 	}
 };
+
+int HyperParameters::_d = 0;
+int HyperParameters::_k = 0;
 
 #endif
 
