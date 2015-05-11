@@ -5,7 +5,7 @@
 #include <cmath>
 #include <iostream>
 
-#define TYPES {"fvalue", "mean-fvalue"}
+#define TYPES {"elasped", "mean-elasped"}//"niter", "fvalue", "fevals", "mean-elapsed", "mean-niter", "mean-fvalue", "mean-fevals", "max", "min"}
 #define NB_TYPES 2
 #define MEAN_ID_LEN 5 //length of mean-
 
