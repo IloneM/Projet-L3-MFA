@@ -1,19 +1,40 @@
-#ifndef RP_CMA_BIG_H
-#define RP_CMA_BIG_H
+#ifndef ERP_CMA_BIG_H
+#define ERP_CMA_BIG_H
 
 #include <cmaes.h>
-#include "rpcmasmall.h"
+#include <vector>
+#include <memory>
+#include <random>
+#include "erpcmasmall.h"
+
+/*
+ * TODO:
+ * Important:
+ * -Make ERPCMABig and RPCMABIG having common ancester
+ * -Rebuild tell in (E)RPCMASmall in way to prevent sorting candiates again and delete build_fvalue in library
+ * -Implement chooseSDimStrat and update_weight (and see if this last must be implemented in ERPCMABig or Small)
+ *
+ * Secondary:
+ * -See wich call orders are the best in tell, ask, eval
+ * -Add warnings for calls to sdimstrat methods orders (see above)
+ */
 
 namespace libcmaes
 {
 
-template <class TCovarianceUpdate,class TGenoPheno>
+template <class TCovarianceUpdate,class TGenoPheno=GenoPheno<NoBoundStrategy>>
 class ERPCMABig : public CMAStrategy<TCovarianceUpdate,TGenoPheno>
 {
 protected:
 
 	//small dimension strategy
-	RPCMASmall<TCovarianceUpdate,TGenoPheno>* _sdimstrat;
+	std::vector<std::shared_ptr<ERPCMASmall<ERPCMABig<TCovarianceUpdate,TGenoPheno>,TCovarianceUpdate,TGenoPheno>>> _sdimstrats;
+
+	//The sum of all the weights of sdim_strats
+	double _totalWeights;
+
+	//the generator used for selecting the small strategy to use
+	std::mt19937 _gen;
 
 	/* 
 	 * Using pointer because of a twisted issue if not.. See parameters-tests branch for more info
@@ -52,13 +73,42 @@ protected:
 		return params;
 	}
 
+	unsigned int setupGenerator() {
+		std::random_device rd;
+		return rd();
+	}
+
     /**
      * \brief Build a new Small dimension strategy with dimension of d and sparams parameters
      * @param original parameters usually set by user
      * @param the new dimension
      */
-	RPCMASmall<TCovarianceUpdate,TGenoPheno>* setupSDimStrat(CMAParameters<TGenoPheno>& sparams, const int& d) {
-		return new RPCMASmall<TCovarianceUpdate,TGenoPheno>(setupDim(sparams, d), this);
+	std::shared_ptr<ERPCMASmall<ERPCMABig<TCovarianceUpdate,TGenoPheno>,TCovarianceUpdate,TGenoPheno>> setupSDimStrat(CMAParameters<TGenoPheno>& sparams, const int& d, const double weight) {
+		return std::make_shared<ERPCMASmall<ERPCMABig<TCovarianceUpdate,TGenoPheno>,TCovarianceUpdate,TGenoPheno>>(setupDim(sparams, d), this, weight);
+	}
+
+	std::shared_ptr<ERPCMASmall<ERPCMABig<TCovarianceUpdate,TGenoPheno>,TCovarianceUpdate,TGenoPheno>> chooseSDimStrat() {
+		std::uniform_real_distribution <double> uni(0.0,_totalWeights);
+		double res;
+
+		//For the very unprobable res == _totalWeights case
+		do {		
+			res = uni(_gen);
+		} while(res >= _totalWeights);
+
+		for(int i=0; i< _sdimstrats.size(); i++) {
+			res -= _sdimstrats[i]->weight();
+			if(res < 0) {
+				std::cout << "choosed is " << i << '\n';
+				return _sdimstrats[i];
+			}
+		}
+		return _sdimstrats[_sdimstrats.size()-1];//if not returned is cause of approximations errors
+/*
+		//in the very unprobable case (i.e. res == _totalWeights case) which none has been selected, select it randmoly without considering weights
+		std::uniform_int_distribution<int> uni_int(0, _sdimstrats.size()-1);
+		return _sdimstrats[uni_int(gen)];
+*/
 	}
 
 public:
@@ -74,9 +124,12 @@ public:
      * @param func objective function to minimize
      * @param parameters stochastic search parameters
      */
-    RPCMABig(FitFunc &func,
-	  CMAParameters<TGenoPheno> &bparams) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, setupParameters(bparams)) {
-		_sdimstrat = setupSDimStrat(*_backupParams, _hp.d());
+    ERPCMABig(FitFunc &func,
+	  CMAParameters<TGenoPheno> &bparams) : CMAStrategy<TCovarianceUpdate,TGenoPheno>(func, setupParameters(bparams)), _sdimstrats(_hp.M()), _totalWeights(1.0), _gen(setupGenerator()) {
+		
+		for(int i=0; i< _sdimstrats.size(); i++) {
+			_sdimstrats[i] = setupSDimStrat(*_backupParams, _hp.d(), 1.0/_hp.M());
+		}
 		/*
 		 * for multi RPCMA maybe create another var for sparams
 		 */
@@ -88,132 +141,54 @@ public:
      * @param parameters stochastic search parameters
      * @param cmasols solution object to start from
      */
-
-	~RPCMABig() {
-		delete _sdimstrat;
+	~ERPCMABig() {
 		delete _backupParams;
 	}
 
-  virtual dMat ask()
-  {
-#ifdef HAVE_DEBUG
-    std::chrono::time_point<std::chrono::system_clock> tstart = std::chrono::system_clock::now();
-#endif
-    
-    // compute eigenvalues and eigenvectors.
-    CMAStrategy<TCovarianceUpdate,TGenoPheno>::initialize_esolver_and_solutions();
-
-    //debug
-    //std::cout << "transform: " << _esolver._transform << std::endl;
-    //debug
-    
-	_sdimstrat->ask();
-    // sample for multivariate normal distribution, produces one candidate per column.
-	dMat pop(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda());
-	dMat candidates(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), _hp.k());
-    
-	for(int i=0; i< CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda(); i++) {
-		candidates = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_esolver.samples_ind(_hp.k(),CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sigma);
-		pop.col(i) = _sdimstrat->bestCandidate(candidates);
-	}
-
-    // gradient if available.
-    if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._with_gradient)
-      {
-	dVec grad_at_mean = CMAStrategy<TCovarianceUpdate,TGenoPheno>::gradf(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._gp.pheno(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean));
-	dVec gradgp_at_mean = CMAStrategy<TCovarianceUpdate,TGenoPheno>::gradgp(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean); // for geno / pheno transform.
-	grad_at_mean = grad_at_mean.cwiseProduct(gradgp_at_mean);
-	if (grad_at_mean != dVec::Zero(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._dim))
-	  {
-	    dVec nx;
-	    if (!CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._sep && !CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._vd)
-	      {
-		dMat sqrtcov = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_esolver._eigenSolver.operatorSqrt();
-		dVec q = sqrtcov * grad_at_mean;
-		double normq = q.squaredNorm();
-		nx = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sigma * (sqrt(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._dim / normq)) * CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._cov * grad_at_mean;
-	      }
-	    else nx = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sigma * (sqrt(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._dim) / ((CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sepcov.cwiseSqrt().cwiseProduct(grad_at_mean)).norm())) * CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sepcov.cwiseProduct(grad_at_mean);
-	    pop.col(0) = nx;
-	  }
-      }
-
-    // tpa: fill up two first (or second in case of gradient) points with candidates usable for tpa computation
-    if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._tpa == 2  && CMAStrategy<TCovarianceUpdate,TGenoPheno>::_niter > 0)
-      {
-	dVec mean_shift = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean - CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean_prev;
-	double mean_shift_norm = 1.0;
-	if (!CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._sep && !CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._vd)
-	  mean_shift_norm = (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_esolver._eigenSolver.eigenvalues().cwiseSqrt().cwiseInverse().cwiseProduct(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_esolver._eigenSolver.eigenvectors().transpose()*mean_shift)).norm() / CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sigma;
-	else mean_shift_norm = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sepcov.cwiseSqrt().cwiseInverse().cwiseProduct(mean_shift).norm() / CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sigma;
-	//std::cout << "mean_shift_norm=" << mean_shift_norm << " / sqrt(N)=" << std::sqrt(std::sqrt(eostrat<TGenoPheno>::_parameters._dim)) << std::endl;
-
-	dMat rz = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_esolver.samples_ind(1);
-	double mfactor = rz.norm();
-	dVec z = mfactor * (mean_shift / mean_shift_norm);
-	CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_x1 = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean + z;
-	CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_x2 = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._xmean - z;
-	
-	// if gradient is in col 0, move tpa vectors to pos 1 & 2
-	if (CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._with_gradient)
-	  {
-	    CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_p1 = 1;
-	    CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_p2 = 2;
-	  }
-	pop.col(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_p1) = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_x1;
-	pop.col(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_p2) = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._tpa_x2;
-      }
-    
-    // if some parameters are fixed, reset them.
-    if (!CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._fixed_p.empty())
-      {
-	for (auto it=CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._fixed_p.begin();
-	     it!=CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._fixed_p.end();++it)
-	  {
-	    pop.block((*it).first,0,1,pop.cols()) = dVec::Constant(pop.cols(),(*it).second).transpose();
-	  }
-      }
-    
-    //debug
-    //DLOG(INFO) << "ask: produced " << pop.cols() << " candidates\n";
-    //std::cerr << pop << std::endl;
-    //debug
-
-#ifdef HAVE_DEBUG
-    std::chrono::time_point<std::chrono::system_clock> tstop = std::chrono::system_clock::now();
-    CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._elapsed_ask = std::chrono::duration_cast<std::chrono::milliseconds>(tstop-tstart).count();
-#endif
-    
-    return pop;
-  }
-
-/*
-	dMat ask() {
-		//_sdimstrat->initialize_esolver_and_solutions();
-		_sdimstrat->ask();
-		int lambda = CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda();
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._lambda = _hp.k();
-
-		dMat pop(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), lambda);
-		dMat candidates(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), _hp.k());
-
-		for(int i=0; i< lambda; i++) {
-			candidates = CMAStrategy<TCovarianceUpdate,TGenoPheno>::ask();
-			pop.col(i) = _sdimstrat->bestCandidate(candidates);
+	virtual dMat ask() {
+		for(int i=0; i< _sdimstrats.size(); i++) {
+			_sdimstrats[i]->ask();
 		}
-
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters._lambda = lambda;
-		return pop;
-	}
-*/
-	virtual void eval(const dMat &candidates, const dMat &phenocandidates=dMat(0,0)) {
-		CMAStrategy<TCovarianceUpdate,TGenoPheno>::eval(candidates, phenocandidates);
-		_sdimstrat->eval(_sdimstrat->randProjection() * candidates);
+		return CMAStrategy<TCovarianceUpdate,TGenoPheno>::ask();
 	}
 
+	virtual void build_pop(dMat& pop) {
+		std::shared_ptr<ERPCMASmall<ERPCMABig<TCovarianceUpdate,TGenoPheno>,TCovarianceUpdate,TGenoPheno>> sdimstrat = chooseSDimStrat();
+
+		// sample for multivariate normal distribution, produces one candidate per column.
+		pop = dMat(CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.dim(), CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda());
+    
+		for(int i=0; i< CMAStrategy<TCovarianceUpdate,TGenoPheno>::_parameters.lambda(); i++) {
+			pop.col(i) = sdimstrat->bestCandidate(
+				CMAStrategy<TCovarianceUpdate,TGenoPheno>::_esolver.samples_ind(
+					_hp.K(),
+					CMAStrategy<TCovarianceUpdate,TGenoPheno>::_solutions._sigma
+				)
+			);
+		}
+	}
+
+	//rewrite erpcmasmall tell for preventing the resorting of solutions
 	virtual void tell() {
 		CMAStrategy<TCovarianceUpdate,TGenoPheno>::tell();
-		_sdimstrat->tell();
+		for(int i=0; i< _sdimstrats.size(); i++) {
+			_sdimstrats[i]->eval();
+			_sdimstrats[i]->tell();
+			_totalWeights += _sdimstrats[i]->update_weight();
+		}
+	}
+
+	virtual bool stop() {
+		bool res_big = CMAStrategy<TCovarianceUpdate,TGenoPheno>::stop();
+		bool res_small;
+//		std::cout << "Big is " << res_big << '\n';
+		for(int i=0; i< _sdimstrats.size(); i++) {
+			res_small = _sdimstrats[i]->stop();
+//			std::cout << "Small " << i << " is " << res_small << '\n';
+			res_big &= res_small;
+		}
+//		std::cout << CMAStrategy<TCovarianceUpdate,TGenoPheno>::get_solutions().get_best_seen_candidate().get_fvalue() << '\n';
+		return res_big;
 	}
 };
 }
